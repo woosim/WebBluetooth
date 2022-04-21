@@ -3,7 +3,7 @@ Web Bluetooth examples with Woosim Printer
 
 This repository contains example to help you get tested with Web Bluetooth.
 
-Test at https://woosim.github.io/webprint/Bluetooth_Test/Bluetooth_Test.html
+Test at https://woosim.github.io/WebBluetooth/Bluetooth_Test.html
 
 ### Environment for Testing
 * WSP-i250(RX) Bluetooth Ver4.0
