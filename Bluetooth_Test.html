@@ -157,15 +157,15 @@
         });
                                
         async function sendTextData2() { // Print text "This is test."
-          await printCharacteristic.writeValue(test);
-          await printCharacteristic.writeValue(LF);
-          await printCharacteristic.writeValue(GAtoHA);
-          await printCharacteristic.writeValue(LF);
-          await printCharacteristic.writeValue(AtoZ);
-          await printCharacteristic.writeValue(LF);
-          await printCharacteristic.writeValue(ONEtoZERO);
-          await printCharacteristic.writeValue(LF);
-          await printCharacteristic.writeValue(LF);
+          await printCharacteristic.writeValue(test).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(GAtoHA).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(AtoZ).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(ONEtoZERO).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
+          await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
           await printCharacteristic.writeValue(LF)
             .then(() => this.delayPromise(100))
             .catch(error => { 
