@@ -36,7 +36,8 @@
         let BluetoothDevice = null;
         let image = null;
         
-        let AtoZ = new Uint8Array([0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A]);
+        let AtoZ = new Uint8Array([0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,
+                                   0x41,0x42,0x43,0x44,0x45,0x46]);
         let GAtoHA = new Uint8Array([0xAC00,0xB098,0xB2E4,0xB77C,0xB9C8,0xBC14,0xC0AC,0xC544,0xC790,0xCC28,0xCE74,0xD0C0,0xD30C,0xD558,
                                      0xAC00,0xB098,0xB2E4,0xB77C,0xB9C8,0xBC14,0xC0AC,0xC544,0xC790,0xCC28,0xCE74,0xD0C0,0xD30C,0xD558]);
         let ONEtoZERO = new Uint8Array([0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x30,
@@ -72,13 +73,13 @@
             let index=0;
             await printCharacteristic.writeValue(initialize);
             //await printCharacteristic.writeValue(image);
-            while (index + 16 < image.length) {
-                let temp = image.slice(index, index + 16);
+            while (index + 32 < image.length) {
+                let temp = image.slice(index, index + 32);
                 console.log(temp);
                 await printCharacteristic.writeValue(temp)
                     .then(() => {
                         this.delayPromise(100);
-                        index += 16;
+                        index += 32;
                     })
                     .catch(error => { 
                         console.log(error);
@@ -161,7 +162,7 @@
                                
         async function sendTextData2() { // Print text "This is test."
           await printCharacteristic.writeValue(AtoZ);
-          //await printCharacteristic.writeValue(GAtoHA);
+          await printCharacteristic.writeValue(GAtoHA);
           //await printCharacteristic.writeValue(ONEtoZERO);
           //await printCharacteristic.writeValue(test);
           await printCharacteristic.writeValue(LF)
