@@ -18,7 +18,7 @@
     <body>
         <p align="center"><button id="scan" class="buttons">Scan Device</button></p>
         <p align="center"><button id="printtext" class="buttons">Print Text</button></p>
-        <p align="center"><input id="file" type="file" value="Select File"/></p> <!--onchange="onImageChange(event)-->
+        <p align="center"><input id="file" type="file"></p> <!--onchange="onImageChange(event)-->
         <p align="center"><button id="printimage" class="buttons">Print File</button></p>
         <p align="center"><button id="disconnect" class="buttons">Disconnect Device</button></p>
         <p align="center"><img  id="logo" src="./img/woosim.bmp"></p>
@@ -28,7 +28,7 @@
           
         let connect = document.querySelector('#scan');
         let printtext = document.querySelector('#printtext');
-        let printimage = document.querySelector('#printimage');
+        let printimage = document.querySelector('#printimage'); printimage.innerText = 'Select File';
         let disconnect = document.querySelector('#disconnect');
         let debug = document.querySelector('#debug');
         let logo = document.querySelector('#logo');
@@ -72,7 +72,7 @@
         async function PrintImage() {
             let index=0;
             await printCharacteristic.writeValue(initialize);
-            await printCharacteristic.writeValue(image);
+            //await printCharacteristic.writeValue(image);
             while (index + 16 < image.length) {
                 let temp = image.slice(index, index + 16);
                 console.log(temp);
@@ -162,8 +162,8 @@
                                
         async function sendTextData2() { // Print text "This is test."
           await printCharacteristic.writeValue(AtoZ);
-          await printCharacteristic.writeValue(GAtoHA);
-          await printCharacteristic.writeValue(ONEtoZERO);
+          //await printCharacteristic.writeValue(GAtoHA);
+          //await printCharacteristic.writeValue(ONEtoZERO);
           //await printCharacteristic.writeValue(test);
           await printCharacteristic.writeValue(LF)
             .then(() => this.delayPromise(100))
