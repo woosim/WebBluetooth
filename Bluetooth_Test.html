@@ -22,9 +22,7 @@
         <p align="center"><button id="printimage" class="buttons">Print Image</button></p>
         <p align="center"><button id="disconnect" class="buttons">Disconnect Device</button></p>
         <p align="center"><img  id="logo" src="./img/woosim.bmp"></p>
-        
         <br/><br/><br/><br/><p align="center" id="debug">Debug Text</p>
-        <!--<p align="center"><image id="logo" src="./img/Logo1.png"></img>-->
         
         <script type="text/javascript" charset="utf-8">
           
@@ -37,6 +35,8 @@
         let printCharacteristic = null;
         let BluetoothDevice = null;
         
+        let AtoZ = new Uint8Array([0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,
+                                   0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A]);
         let woosim = new Uint8Array([0x57, 0x6F, 0x6F, 0x73, 0x69, 0x6D, 0x20, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6D]);
         let test = new Uint8Array([0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x74, 0x65, 0x73, 0x74, 0x2E]);
         let initialize = new Uint8Array([0x1B, 0x40]); // Initialize printer. ESC @
@@ -45,7 +45,7 @@
         let LF = new Uint8Array([0x0A, 0x0A, 0x0A]);
         let FF = new Uint8Array([0x0C]); // Print and return to standard mode in page mode. FF
         
-        /*2022.04.12*/
+        /*2022.04.12 image가 load됐을때 base64 data를 decode를 통해 array buffer에 넣는 test코드*/
         let strImage;
         logo.addEventListener('load', function(e) {
             getDataUrl(e.currentTarget);
@@ -72,8 +72,9 @@
         }
         /*2022.04.12*/
             
-        /* 2022.04.11 image test ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-        let bitcommand1 = new Uint8Array([0x1B, 0x58, 0x34, 0x02, 0x14]); // ESC X 4 x y d1 ~ dk // Define user-defined bit-image.
+        /* 2022.04.11 file 불러오기를 통해 불러온 이미지 파일을 array buffer형식으로 읽어오는 코드 */
+        // ESC X 4 x y d1 ~ dk // Define user-defined bit-image.
+        // let bitcommand1 = new Uint8Array([0x1B, 0x58, 0x34, 0x02, 0x14]);
         let image;
         document.querySelector('#file').addEventListener('change', function(e) {
             let file = e.target.files;
@@ -95,8 +96,8 @@
             let index=0;
             // await printCharacteristic.writeValue(bitcommand1); // Test
             await printCharacteristic.writeValue(initialize);
-            await printCharacteristic.writeValue(pagemode);
-            await printCharacteristic.writeValue(area);
+            // await printCharacteristic.writeValue(pagemode);
+            // await printCharacteristic.writeValue(area);
             while (index + 16 < image.length) {
                 let temp = image.slice(index, index + 16);
                 console.log(temp);
@@ -122,7 +123,7 @@
                         console.log(error);
                         debug.innerText = error;
                     });
-                await printCharacteristic.writeValue(FF);
+                // await printCharacteristic.writeValue(FF);
             }
             await printCharacteristic.writeValue(LF);
         }
@@ -186,7 +187,8 @@
         });
                                
         async function sendTextData2() { // This is test.
-          await printCharacteristic.writeValue(test);
+          await printCharacteristic.writeValue(AtoZ);
+          //await printCharacteristic.writeValue(test);
           await printCharacteristic.writeValue(LF)
             .then(() => this.delayPromise(100))
             .catch(error => { 
