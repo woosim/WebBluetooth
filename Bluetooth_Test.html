@@ -36,8 +36,9 @@
         let BluetoothDevice = null;
         let image = null;
         
-        let AtoZ = new Uint8Array([0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A,
-                                   0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,0x4E,0x4F,0x50,0x51,0x52,0x53]); // max length = 45
+        // 한번에 보낼수있는 max length = 45
+        let AtoZ = new Uint8Array([0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,
+                                   0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A]);
         let GAtoHA = new Uint8Array([0xB0,0xA1,0xB3,0xAA,0xB4,0xD9,0xB6,0xF3,0xB8,0xB6,0xB9,0xD9,0xBB,0xE7,
                                      0xBE,0xC6,0xC0,0xDA,0xC2,0xF7,0xC4,0xAB,0xC5,0xB8,0xC6,0xC4,0xC7,0xCF]);
         let ONEtoZERO = new Uint8Array([0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x30]);
@@ -54,7 +55,6 @@
         /* 2022.04.11 불러오기를 통해 불러온 file을 array buffer형식으로 읽어오는 test코드 */
         document.querySelector('#file').addEventListener('change', function(e) {
             let file = e.target.files;
-            console.log(file);
             console.log(file[0]);
             var reader = new FileReader();
             reader.readAsArrayBuffer(e.target.files[0]);
@@ -68,37 +68,37 @@
                 console.log(image.length);
             }
         });
+        
         async function PrintImage() {
             let index=0;
             await printCharacteristic.writeValue(initialize);
-            //await printCharacteristic.writeValue(image);
+            // 한번에 보낼수있는 max length = 45
             while (index + 45 < image.length) {
                 let temp = image.slice(index, index + 45);
-                console.log(temp);
                 await printCharacteristic.writeValue(temp)
                     .then(() => {
                         this.delayPromise(100);
+                        console.log(temp);
                         index += 45;
                     })
                     .catch(error => { 
                         console.log(error);
                         debug.innerText = error;
                     });
-            } 
-            console.log(index);
+            } console.log(index);
+            
             if (index < image.length) {
                 let temp = image.slice(index, image.length);
-                console.log(temp);
                 await printCharacteristic.writeValue(temp)
                     .then(() => {
                         this.delayPromise(100);
+                        console.log(temp);
                     })
                     .catch(error => { 
                         console.log(error);
                         debug.innerText = error;
                     });
-            }
-            await printCharacteristic.writeValue(LF);
+            } await printCharacteristic.writeValue(LF);
         }
         /* ~~ 2022.04.11 image test 불러오기를 통해 불러온 file을 array buffer형식으로 읽어오는 test코드*/
             
@@ -106,10 +106,8 @@
             debug.innerText = 'Scanning the device...';
             console.log('Scanning the device...');
             navigator.bluetooth.requestDevice({ // Scan Device
-                //acceptAllDevices: true, // No Filter All Device Scan
-                filters:[{
-                    name:'WOOSIM-BLE' // Name Filter 'WOOSIM-BLE'에 해당하는 Device Scan
-                }],
+                //acceptAllDevices: true, // No Use Filter. All Device Scan.
+                filters: [{name:'WOOSIM-BLE'}], // Name Filter: 'WOOSIM-BLE'에 해당하는 Device Scan
                 optionalServices: ['a9fe5e12-de71-4020-b2cf-8bf764fb0a8d'] // Printer Service UUID
             })
             .then(device => {
@@ -123,7 +121,6 @@
                 console.log('gatt.connected : ' + BluetoothDevice.gatt.connected);
                 console.log('device.name    : ' + BluetoothDevice.name);
                 console.log('device.id      : ' + BluetoothDevice.id);
-                
                 console.log('server.getPrimaryService...');
                 return server.getPrimaryService('a9fe5e12-de71-4020-b2cf-8bf764fb0a8d');
             })
@@ -160,12 +157,15 @@
         });
                                
         async function sendTextData2() { // Print text "This is test."
-          console.log(AtoZ.length);
-          await printCharacteristic.writeValue(AtoZ);
+          await printCharacteristic.writeValue(test);
           await printCharacteristic.writeValue(LF);
           await printCharacteristic.writeValue(GAtoHA);
+          await printCharacteristic.writeValue(LF);
+          await printCharacteristic.writeValue(AtoZ);
+          await printCharacteristic.writeValue(LF);
           await printCharacteristic.writeValue(ONEtoZERO);
-          //await printCharacteristic.writeValue(test);
+          await printCharacteristic.writeValue(LF);
+          await printCharacteristic.writeValue(LF);
           await printCharacteristic.writeValue(LF)
             .then(() => this.delayPromise(100))
             .catch(error => { 
