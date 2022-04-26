@@ -36,7 +36,7 @@
         let BluetoothDevice = null;
         let image = null;
         
-        // 한번에 보낼수있는 max length = 45
+        // 한번에 보낼수있는 max length = 45 // windows web에선 45, android web에선 20
         let AtoZ = new Uint8Array([0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,
                                    0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A]);
         let GAtoHA = new Uint8Array([0xB0,0xA1,0xB3,0xAA,0xB4,0xD9,0xB6,0xF3,0xB8,0xB6,0xB9,0xD9,0xBB,0xE7,
@@ -72,14 +72,14 @@
         async function PrintImage() {
             let index=0;
             await printCharacteristic.writeValue(initialize);
-            // 한번에 보낼수있는 max length = 45
-            while (index + 45 < image.length) {
-                let temp = image.slice(index, index + 45);
+            // 한번에 보낼수있는 max length = 20
+            while (index + 20 < image.length) {
+                let temp = image.slice(index, index + 20);
                 await printCharacteristic.writeValue(temp)
                     .then(() => {
                         this.delayPromise(100);
                         console.log(temp);
-                        index += 45;
+                        index += 20;
                     })
                     .catch(error => { 
                         console.log(error);
