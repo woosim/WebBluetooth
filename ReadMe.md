@@ -8,9 +8,9 @@ Test at https://woosim.github.io/WebBluetooth/Bluetooth_Test.html
 ### Environment for Testing
 * WSP-i250(RX) Bluetooth Ver4.0
 * Device Name : WOOSIM-BLE
-* Android 7.0 , Chorme 64
-* Android 11  , Chorme 91
-* Windows 10 , Chorme 97
+* Android 7.0 , Chrome 64, 97
+* Android 11  , Chrome 91, 97
+* Windows 10 , Chrome 97, 100
 
 ### References
 * Communicating with Bluetooth devices over JavaScript : https://web.dev/bluetooth/
