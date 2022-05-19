@@ -76,7 +76,6 @@
                     let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10);
                     if( (gray<=128) && (data[dataIndex+3]!=0) ) {
                         bufferView[byteIndex]|=0x01<<(7-bitCount);
-                        console.log(gray); console.log(bufferView);
                     }
                 }
             }
@@ -84,7 +83,7 @@
         let binary="";
         let len = buffer.byteLength;
         for(i=0; i<len; i++) {
-            binary+=String.fromCharCode(bufferView[i])
+            binary+=String.fromCharCode(bufferView[i]);
         }
         console.log(binary);
         /* ~2022.05.19 Test */
