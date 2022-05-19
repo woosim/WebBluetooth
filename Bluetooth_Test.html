@@ -23,6 +23,7 @@
         <p align="center"><button id="disconnect" class="buttons">Disconnect Device</button></p>
         <p align="center"><img  id="logo" src="./img/woosim.bmp"></p>
         <br/><br/><br/><br/><p align="center" id="debug">Debug Text</p>
+        <canvas align=center id="canvas" dir="rtl" width="384" height="900"></canvas> <--2022.05.19 Test-->
         
         <script type="text/javascript" charset="utf-8">
         
@@ -52,6 +53,40 @@
         let area = new Uint8Array([0x1B, 0x57, 0x00, 0x00, 0x00, 0x00, 0x80, 0x01, 0x80, 0x01]); // Set printing area in page mode.
         let bitcommand1 = new Uint8Array([0x1B, 0x58, 0x34, 0x02, 0x14]); // ESC X 4 x y d1 ~ dk // Define user-defined bit-image.
         
+        /* 2022.05.19 Test~ */
+        let canvas = doucment.getElementById('canvas');
+        let context = canvas.getContext('2d');
+        let width = logo.width;
+        let height = logo.height;
+        let bytePerRow = parseInt(logo.width/8)+((logo.width%8)?0:1);
+        let arrayCount = bytePerRow*logo.height;
+        let buffer = new ArrayBuffer(arrayCount);
+        let bufferView = new Uint8Array(buffer);
+        
+        logo.onload = function() {
+            context.drawImage(logo, 0, 0, logo.width, logo.height);
+            let d = context.getImageData(0, 0, logo.width, logo.height);
+            let data = d.data;
+            for(let e=0; e<logo.height; e++) {
+                for(let f=0; f<logo.width; f++) {
+                    let byteCount = parseInt(f/8);
+                    let bitCount = parsInt(f%8);
+                    let dataIndex = (e*width*4)+(f*4);
+                    let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10);
+                    if( (gray<=128) && (data[dataIndex+3]!=0) ) {
+                        bufferView[byteIndex]|=0x01<<(7-bitCount)
+                    }
+                }
+            }
+        }
+        let binary="";
+        let len = buffer.byteLength;
+        for(i=0; i<len; i++) {
+            binary+=String.fromCharCode(bufferView[i])
+        }
+        console.log(binary);
+        /* ~2022.05.19 Test */
+            
         /* 2022.04.11 불러오기를 통해 불러온 file을 array buffer형식으로 읽어오는 test코드 */
         document.querySelector('#file').addEventListener('change', function(e) {
             let file = e.target.files;
