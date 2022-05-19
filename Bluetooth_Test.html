@@ -66,14 +66,14 @@
         logo.onload = function() {
             context.drawImage(logo, 0, 0, logo.width, logo.height);
             let d = context.getImageData(0, 0, logo.width, logo.height); console.log(d);
-            let data = d.data;
+            let data = d.data; console.log(data);
             for(let e=0; e<logo.height; e++) {
                 for(let f=0; f<logo.width; f++) {
                     let byteCount = parseInt(f/8);
                     let bitCount = parseInt(f%8);
                     let byteIndex = (e*bytePerRow)+byteCount;
                     let dataIndex = (e*width*4)+(f*4);
-                    let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10);
+                    let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10); console.log(gray);
                     if( (gray<=128) && (data[dataIndex+3]!=0) ) {
                         bufferView[byteIndex]|=0x01<<(7-bitCount)
                     }
