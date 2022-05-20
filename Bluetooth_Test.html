@@ -56,24 +56,22 @@
         /* 2022.05.19 Test~ */
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
-        let width = logo.width;
-        let height = logo.height;
-        let bytePerRow = parseInt(width/8)+((width%8)?0:1);
+        let bytePerRow = parseInt(192/8)+((192%8)?0:1);
         let arrayCount = bytePerRow*height;
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
         let binary="";
         
         logo.onload = function() {
-            context.drawImage(logo, 0, 0, width, height);
-            let d = context.getImageData(0, 0, width, height); console.log(d);
+            context.drawImage(logo, 0, 0, 192, 120);
+            let d = context.getImageData(0, 0, 192, 120); console.log(d);
             let data = d.data; console.log(data);
-            for(let e=0; e<height; e++) {
-                for(let f=0; f<width; f++) {
+            for(let e=0; e<120; e++) {
+                for(let f=0; f<192; f++) {
                     let byteCount = parseInt(f/8);
                     let bitCount = parseInt(f%8);
                     let byteIndex = (e*bytePerRow)+byteCount;
-                    let dataIndex = (e*width*4)+(f*4);
+                    let dataIndex = (e*192*4)+(f*4);
                     let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10);
                     if( (gray<=128) && (data[dataIndex+3]!=0) ) {
                         bufferView[byteIndex]|=0x01<<(7-bitCount);
