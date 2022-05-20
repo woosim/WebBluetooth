@@ -62,6 +62,7 @@
         let bufferView = new Uint8Array(buffer);
         let binary="";
         let encode="";
+        let compressedData="";
         
         logo.onload = function() {
             context.drawImage(logo, 0, 0, 192, 120);
@@ -83,12 +84,99 @@
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
             }
-            console.log(binary);
-            encode = window.btoa(binary);
-            console.log(encode);
         }
-        
-        
+        async function canvastoimage() {
+            let imgRowBytes = (192 / 8) + ((192 % 8 == 0) ? 0 : 1);
+            let page = 0;
+            for(; page < 120/255; page++) {
+                let from = page * imgRowBytes * 255;
+                let to = from + imgRowBytes * 255;
+                compressedData = CompressImage(binary.slice(from,to));
+                let command1 = new Uint8Array([0x1B, 0x58, 0x33, imgRowBytes, 255]);
+                await printCharacteristic.writeValue(command1);
+                printcanvas(compressedData);
+                let command2 = new Uint8Array([0x1B, 0x58, 0x32, 255]);
+                await printCharacteristic.writeValue(command2);
+            }
+            if(120%255 != 0) {
+                compressedData = CompressImage(binary.slice(page*imgRowBytes*255,binary.length));
+                let command3 = new Uint8Array([0x1B, 0x58, 0x33, imgRowBytes, (120%255)]);
+                await printCharacteristic.writeValue(command3);
+                printcanvas(compressedData);
+                let command4 = new Uint8Array([0x1B, 0x58, 0x32, (120%255)]);
+                await printCharacteristic.writeValue(command4);
+        }
+        async function CompressImage(data) {
+            let bout;
+            let header;
+            let index = 0;
+            let limit = 0;
+            let end = 0;
+            let length = data.length;
+            
+            while(index < length) {
+                let isEqual = false;
+                if(length - index > 2 && data[index] == data[index+1] && data[index+1] == data[index+2])
+                    isEqual = true;
+                limit = (index+62 < length) ? index+62 : length;
+                end=0;
+                for(let i=index; i<limit; i++, end++) {
+                    if(isEqual==true) {
+                        if(limit > (i+1)) {
+                            if(data[i] != data[i+1])
+                                break;
+                        }
+                    } else {
+                        if(limit > (i+2)) {
+                            if(data[i]==data[i+1] && data[i+1]==data[i+2]) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(isEqual==true) {
+                    header = new Uint8Array([0xC0+end]);
+                    bout += header.slice();
+                    bout += data.slice(index, index+1);
+                }else{
+                    header = new Uint8Array([0x80+end]);
+                    bout += header.slice();
+                    bout += data.slice(index, index+1+end);
+                }
+                index += end;
+            }
+            return bout;
+        }
+        async function printcanvas(data) {
+            let index=0;
+            // 한번에 보낼수있는 max length = 20
+            while (index + 20 < data.length) {
+                let temp = data.slice(index, index + 20);
+                await printCharacteristic.writeValue(temp)
+                    .then(() => {
+                        this.delayPromise(100);
+                        //console.log(temp);
+                        index += 20;
+                    })
+                    .catch(error => { 
+                        console.log(error);
+                        debug.innerText = error;
+                    });
+            } //console.log(index);
+            
+            if (index < data.length) {
+                let temp = data.slice(index, data.length);
+                await printCharacteristic.writeValue(temp)
+                    .then(() => {
+                        this.delayPromise(100);
+                        //console.log(temp);
+                    })
+                    .catch(error => { 
+                        console.log(error);
+                        debug.innerText = error;
+                    });
+            } //await printCharacteristic.writeValue(LF);
+        }
         /* ~2022.05.19 Test */
             
         /* 2022.04.11 불러오기를 통해 불러온 file을 array buffer형식으로 읽어오는 test코드 */
@@ -192,7 +280,8 @@
             sendTextData2();
         });
         printimage.addEventListener('click', function() {
-            PrintImage();
+            //PrintImage();
+            canvastoimage();
         });
                                
         async function sendTextData2() { // Print text "This is test."
