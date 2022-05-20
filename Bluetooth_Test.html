@@ -57,7 +57,7 @@
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
         let bytePerRow = parseInt(192/8)+((192%8)?0:1);
-        let arrayCount = bytePerRow*height;
+        let arrayCount = bytePerRow*120;
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
         let binary="";
