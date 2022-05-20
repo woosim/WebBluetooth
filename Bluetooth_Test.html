@@ -61,6 +61,7 @@
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
         let binary="";
+        let encode="";
         
         logo.onload = function() {
             context.drawImage(logo, 0, 0, 192, 120);
@@ -83,6 +84,8 @@
                 binary+=String.fromCharCode(bufferView[i]);
             }
             console.log(binary);
+            encode = window.btoa(binary);
+            console.log(encode);
         }
         
         
