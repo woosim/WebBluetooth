@@ -66,8 +66,8 @@
         
         logo.onload = function() {
             context.drawImage(logo, 0, 0, 192, 120);
-            let d = context.getImageData(0, 0, 192, 120); console.log(d);
-            let data = d.data; console.log(data);
+            let d = context.getImageData(0, 0, 192, 120); console.log("getImageData: "+d);
+            let data = d.data; console.log("ImageData: "+data);
             for(let e=0; e<120; e++) {
                 for(let f=0; f<192; f++) {
                     let byteCount = parseInt(f/8);
@@ -83,15 +83,17 @@
             let len = buffer.byteLength;
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
-            }
+            } console.log("binary: "+binary);
         }
-        async function canvastoimage() {
+        async function canvastoimage() { console.log("canvastoimage()");
             let imgRowBytes = (192 / 8) + ((192 % 8 == 0) ? 0 : 1);
             let page = 0;
             for(; page < 120/255; page++) {
                 let from = page * imgRowBytes * 255;
                 let to = from + imgRowBytes * 255;
                 compressedData = CompressImage(binary.slice(from,to));
+                console.log("slice: "+binary.slice(from,to));
+                console.log("compressedData: "+compressedData);
                 let command1 = new Uint8Array([0x1B, 0x58, 0x33, imgRowBytes, 255]);
                 await printCharacteristic.writeValue(command1);
                 printcanvas(compressedData);
@@ -136,13 +138,13 @@
                     }
                 }
                 if(isEqual==true) {
-                    header = new Uint8Array([0xC0+end]);
-                    bout += header.slice();
-                    bout += data.slice(index, index+1);
+                    header = new Uint8Array([0xC0+end]); console.log("header: "+header);
+                    bout += header.slice(); console.log("bout: "+bout);
+                    bout += data.slice(index, index+1); console.log("bout: "+bout);
                 }else{
-                    header = new Uint8Array([0x80+end]);
-                    bout += header.slice();
-                    bout += data.slice(index, index+1+end);
+                    header = new Uint8Array([0x80+end]); console.log("header: "+header);
+                    bout += header.slice(); console.log("bout: "+bout);
+                    bout += data.slice(index, index+1+end); console.log("bout: "+bout);
                 }
                 index += end;
             }
