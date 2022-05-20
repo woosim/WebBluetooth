@@ -23,7 +23,7 @@
         <p align="center"><button id="disconnect" class="buttons">Disconnect Device</button></p>
         <p align="center"><img  id="logo" src="./img/woosim.bmp"></p>
         <br/><br/><br/><br/><p align="center" id="debug">Debug Text</p>
-        <canvas align="center" id="canvas" dir="rtl" width="384" height="384"></canvas> <!--2022.05.19 Test-->
+        <canvas align="center" id="canvas" dir="rtl" width="192" height="120"></canvas> <!--2022.05.19 Test-->
         
         <script type="text/javascript" charset="utf-8">
         
@@ -58,17 +58,18 @@
         let context = canvas.getContext('2d');
         let width = logo.width;
         let height = logo.height;
-        let bytePerRow = parseInt(logo.width/8)+((logo.width%8)?0:1);
-        let arrayCount = bytePerRow*logo.height;
+        let bytePerRow = parseInt(width/8)+((width%8)?0:1);
+        let arrayCount = bytePerRow*height;
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
+        let binary="";
         
         logo.onload = function() {
-            context.drawImage(logo, 0, 0, logo.width, logo.height);
-            let d = context.getImageData(0, 0, logo.width, logo.height); console.log(d);
+            context.drawImage(logo, 0, 0, width, height);
+            let d = context.getImageData(0, 0, width, height); console.log(d);
             let data = d.data; console.log(data);
-            for(let e=0; e<logo.height; e++) {
-                for(let f=0; f<logo.width; f++) {
+            for(let e=0; e<height; e++) {
+                for(let f=0; f<width; f++) {
                     let byteCount = parseInt(f/8);
                     let bitCount = parseInt(f%8);
                     let byteIndex = (e*bytePerRow)+byteCount;
@@ -79,13 +80,14 @@
                     }
                 }
             }
+            let len = buffer.byteLength;
+            for(let i=0; i<len; i++) {
+                binary+=String.fromCharCode(bufferView[i]);
+            }
+            console.log(binary);
         }
-        let binary="";
-        let len = buffer.byteLength;
-        for(let i=0; i<len; i++) {
-            binary+=String.fromCharCode(bufferView[i]);
-        }
-        console.log(binary);
+        
+        
         /* ~2022.05.19 Test */
             
         /* 2022.04.11 불러오기를 통해 불러온 file을 array buffer형식으로 읽어오는 test코드 */
