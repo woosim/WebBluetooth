@@ -105,6 +105,7 @@
                 printcanvas(compressedData);
                 let command4 = new Uint8Array([0x1B, 0x58, 0x32, (120%255)]);
                 await printCharacteristic.writeValue(command4);
+            }
         }
         async function CompressImage(data) {
             let bout;
