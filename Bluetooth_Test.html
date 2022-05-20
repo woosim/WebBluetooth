@@ -66,8 +66,8 @@
         
         logo.onload = function() {
             context.drawImage(logo, 0, 0, 192, 120);
-            let d = context.getImageData(0, 0, 192, 120); console.log("getImageData: "+d);
-            let data = d.data; console.log("ImageData: "+data);
+            let d = context.getImageData(0, 0, 192, 120); console.log(d);
+            let data = d.data; console.log(data);
             for(let e=0; e<120; e++) {
                 for(let f=0; f<192; f++) {
                     let byteCount = parseInt(f/8);
