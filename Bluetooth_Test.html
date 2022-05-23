@@ -65,8 +65,8 @@
         let encode="";
         let decode="";
         
-        logo.onload = function() {
-            context.drawImage(logo, 0, 0, 192, 120);
+        logo.onload = function() { console.log(logo);
+            context.drawImage(logo, 0, 0, 192, 120); console.log(context);
             let d = context.getImageData(0, 0, 192, 120); console.log(d);
             let data = d.data; console.log(data);
             for(let e=0; e<120; e++) {
@@ -84,19 +84,19 @@
             let len = buffer.byteLength;
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
-            } console.log("binary: "+binary);
+            } //console.log("binary: "+binary);
             encode = window.btoa(binary); //console.log(encode);
             decode = window.atob(encode); //console.log(decode);
         }
-        async function canvastoimage() { console.log("canvastoimage()");
+        async function canvastoimage() { console.log("function canvastoimage()");
             let imgRowBytes = (192 / 8) + ((192 % 8 == 0) ? 0 : 1);
             let page = 0;
             for(; page < 120/255; page++) {
-                let from = page * imgRowBytes * 255;
-                let to = from + imgRowBytes * 255;
+                let from = page * imgRowBytes * 255; console.log(from);
+                let to = from + imgRowBytes * 255; console.log(to);
                 compressedData = CompressImage(binary.slice(from,to));
-                console.log("slice: "+binary.slice(from,to));
-                console.log("compressedData: "+compressedData);
+                console.log(binary.slice(from,to)); console.log(binary.slice(from,to).length);
+                console.log(compressedData); console.log(compressedData.length); 
                 let command1 = new Uint8Array([0x1B, 0x58, 0x33, imgRowBytes, 255]);
                 await printCharacteristic.writeValue(command1);
                 printcanvas(compressedData);
@@ -112,14 +112,14 @@
                 await printCharacteristic.writeValue(command4);
             }
         }
-        async function CompressImage(data) {
+        async function CompressImage(data) { console.log("function CompressImage()");
             let buffer = new ArrayBuffer(data.length);
             let bout = new Uint8Array(buffer);
             let header;
             let index = 0;
             let limit = 0;
             let end = 0;
-            let length = data.length;
+            let length = data.length; console.log(length);
             
             while(index < length) {
                 let isEqual = false;
@@ -143,18 +143,18 @@
                 } console.log("index:"+index); console.log("end:"+end);
                 if(isEqual==true) {
                     header = new Uint8Array([0xC0+end]); console.log("header: "+header);
-                    bout.set(header, index); console.log("bout: "+bout);
-                    bout.set(data.slice(index, index+1), index+1); console.log("bout: "+bout);
+                    bout.set(header, index); //console.log("bout: "+bout);
+                    bout.set(data.slice(index, index+1), index+1); console.log(data.slice(index, index+1));
                 }else{
                     header = new Uint8Array([0x80+end]); console.log("header: "+header);
-                    bout.set(header, index); console.log("bout: "+bout);
-                    bout.set(data.slice(index, index+1+end), index+1); console.log("bout: "+bout);
+                    bout.set(header, index); //console.log("bout: "+bout);
+                    bout.set(data.slice(index, index+1+end), index+1); console.log(data.slice(index, index+1+end));
                 }
                 index += end;
             }
             return bout;
         }
-        async function printcanvas(data) {
+        async function printcanvas(data) { console.log("function printcanvas()");
             let index=0;
             // 한번에 보낼수있는 max length = 20
             while (index + 20 < data.length) {
