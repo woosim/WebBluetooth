@@ -63,6 +63,8 @@
         let binary="";
         let encode="";
         let compressedData="";
+        let encode="";
+        let decode="";
         
         logo.onload = function() {
             context.drawImage(logo, 0, 0, 192, 120);
@@ -84,6 +86,8 @@
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
             } console.log("binary: "+binary);
+            encode = window.btoa(binary); console.log(encode);
+            decode = window.atob(encode); console.log(decode);
         }
         async function canvastoimage() { console.log("canvastoimage()");
             let imgRowBytes = (192 / 8) + ((192 % 8 == 0) ? 0 : 1);
