@@ -113,7 +113,8 @@
             }
         }
         async function CompressImage(data) {
-            let bout = new Uint8Array();
+            let buffer = new ArrayBuffer(data.length);
+            let bout = new Uint8Array(buffer);
             let header;
             let index = 0;
             let limit = 0;
