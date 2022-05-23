@@ -142,12 +142,12 @@
                 }
                 if(isEqual==true) {
                     header = new Uint8Array([0xC0+end]); console.log("header: "+header);
-                    bout += header.slice(); console.log("bout: "+bout);
-                    bout += data.slice(index, index+1); console.log("bout: "+bout);
+                    bout.set(header, index); console.log("bout: "+bout);
+                    bout.set(data.slice(index, index+1), index+1); console.log("bout: "+bout);
                 }else{
                     header = new Uint8Array([0x80+end]); console.log("header: "+header);
-                    bout += header.slice(); console.log("bout: "+bout);
-                    bout += data.slice(index, index+1+end); console.log("bout: "+bout);
+                    bout.set(header, index); console.log("bout: "+bout);
+                    bout.set(data.slice(index, index+1+end), index+1); console.log("bout: "+bout);
                 }
                 index += end;
             }
