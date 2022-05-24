@@ -84,7 +84,7 @@
             let len = buffer.byteLength;
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
-            } //console.log("binary: "+binary);
+            } //console.log(binary.length);
             encode = window.btoa(binary); //console.log(encode);
             decode = window.atob(encode); //console.log(decode);
         }
@@ -151,11 +151,11 @@
                     bout.set(data.slice(index, index+1+end), index+1); console.log(data.slice(index, index+1+end));
                 }
                 index += end;
-            }
+            } console.log(bout);
             return bout;
         }
         async function printcanvas(data) { console.log("function printcanvas()");
-            let index=0;
+            let index=0; console.log(data);
             // 한번에 보낼수있는 max length = 20
             while (index + 20 < data.length) {
                 let temp = data.slice(index, index + 20);
