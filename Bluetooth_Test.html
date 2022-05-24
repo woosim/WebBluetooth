@@ -84,7 +84,8 @@
             let len = buffer.byteLength;
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
-            } console.log(binary.length);
+            }
+            console.log(binary.length); console.log(binary.byteLength);
             encode = window.btoa(binary); //console.log(encode);
             decode = window.atob(encode); //console.log(decode);
         }
@@ -143,15 +144,15 @@
                 } console.log("index:"+index); console.log("end:"+end);
                 if(isEqual==true) {
                     header = new Uint8Array([0xC0+end]); console.log("header: "+header);
-                    bout.set(header, index); //console.log("bout: "+bout);
-                    bout.set(data.slice(index, index+1), index+1); console.log(data.slice(index, index+1));
+                    bout.push(header); //console.log("bout: "+bout);
+                    bout.push(data.slice(index, index+1)); console.log(data.slice(index, index+1));
                 }else{
                     header = new Uint8Array([0x80+end]); console.log("header: "+header);
-                    bout.set(header, index); //console.log("bout: "+bout);
-                    bout.set(data.slice(index, index+1+end), index+1); console.log(data.slice(index, index+1+end));
+                    bout.push(header); //console.log("bout: "+bout);
+                    bout.push(data.slice(index, index+1+end)); console.log(data.slice(index, index+1+end));
                 }
                 index += end;
-            } console.log(bout);
+            } console.log("return bout:"+bout);
             return bout;
         }
         async function printcanvas(data) { console.log("function printcanvas()");
