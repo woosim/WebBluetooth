@@ -84,7 +84,7 @@
             let len = buffer.byteLength;
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
-            } //console.log(binary.length);
+            } console.log(binary.length);
             encode = window.btoa(binary); //console.log(encode);
             decode = window.atob(encode); //console.log(decode);
         }
