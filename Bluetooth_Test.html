@@ -115,7 +115,7 @@
         }
         async function CompressImage(data) { console.log("function CompressImage()");
             let buffer = new ArrayBuffer(data.length);
-            let bout = new Uint8Array(buffer); console.log(bout);
+            let bout = []; console.log(bout);
             let header = new Uint8Array(); console.log(header);
             let index = 0;
             let limit = 0;
