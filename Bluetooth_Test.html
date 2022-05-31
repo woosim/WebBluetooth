@@ -95,8 +95,8 @@
             for(; page < 120/255; page++) {
                 let from = page * imgRowBytes * 255; console.log(from);
                 let to = from + imgRowBytes * 255; console.log(to);
-                compressedData = CompressImage(binary.slice(from,to));
                 console.log(binary.slice(from,to)); console.log(binary.slice(from,to).length);
+                compressedData = CompressImage(binary.slice(from,to));
                 console.log(compressedData); console.log(compressedData.length); 
                 let command1 = new Uint8Array([0x1B, 0x58, 0x33, imgRowBytes, 255]);
                 await printCharacteristic.writeValue(command1);
@@ -114,7 +114,6 @@
             }
         }
         async function CompressImage(data) { console.log("function CompressImage()");
-            let buffer = new ArrayBuffer(data.length);
             let bout = new Array();
             let header = new ArrayBuffer();
             let index = 0;
@@ -152,8 +151,9 @@
                     bout.push(data.slice(index, index+1+end)); console.log(data.slice(index, index+1+end));
                 }
                 index += end;
-            } console.log("return bout:"+bout);
-            return bout;
+            } console.log(bout); console.log(bout.length);
+            let buffer = new ArrayBuffer(bout);
+            return buffer;
         }
         async function printcanvas(data) { console.log("function printcanvas()");
             let index=0; console.log(data);
