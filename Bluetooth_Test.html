@@ -96,7 +96,7 @@
                 let from = page * imgRowBytes * 255; console.log(from);
                 let to = from + imgRowBytes * 255; console.log(to);
                 console.log(binary.slice(from,to)); console.log(binary.slice(from,to).length);
-                compressedData = new Uint8Array( CompressImage(binary.slice(from,to)) );
+                compressedData = CompressImage(binary.slice(from,to));
                 console.log(compressedData); console.log(compressedData.length); 
                 let command1 = new Uint8Array([0x1B, 0x58, 0x33, imgRowBytes, 255]);
                 await printCharacteristic.writeValue(command1);
@@ -140,15 +140,15 @@
                             }
                         }
                     }
-                } console.log("index:"+index); console.log("end:"+end);
+                } //console.log("index:"+index); console.log("end:"+end);
                 if(isEqual==true) {
-                    header = new Uint8Array([0xC0+end]); console.log("header: "+header);
+                    header = new Uint8Array([0xC0+end]); //console.log("header: "+header);
                     bout.push(header); //console.log("bout: "+bout);
-                    bout.push(data.slice(index, index+1)); console.log(data.slice(index, index+1));
+                    bout.push(data.slice(index, index+1)); //console.log(data.slice(index, index+1));
                 }else{
-                    header = new Uint8Array([0x80+end]); console.log("header: "+header);
+                    header = new Uint8Array([0x80+end]); //console.log("header: "+header);
                     bout.push(header); //console.log("bout: "+bout);
-                    bout.push(data.slice(index, index+1+end)); console.log(data.slice(index, index+1+end));
+                    bout.push(data.slice(index, index+1+end)); //console.log(data.slice(index, index+1+end));
                 }
                 index += end;
             } console.log(bout); console.log(bout.length);
