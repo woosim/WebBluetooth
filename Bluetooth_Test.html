@@ -60,7 +60,7 @@
         let arrayCount = bytePerRow*120;
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
-        let compressedData=[];
+        let compressedData = new Uint8Array();
         let binary="";
         let encode="";
         let decode="";
@@ -80,13 +80,13 @@
                         bufferView[byteIndex]|=0x01<<(7-bitCount);
                     }
                 }
-            }
+            } console.log(bufferView);
             let len = buffer.byteLength;
             for(let i=0; i<len; i++) {
                 binary+=String.fromCharCode(bufferView[i]);
             }
-            console.log(binary.length); console.log(binary.byteLength);
-            encode = window.btoa(binary); //console.log(encode);
+            console.log(binary); console.log(binary.length);
+            encode = window.btoa(binary); console.log(encode);
             decode = window.atob(encode); //console.log(decode);
         }
         async function canvastoimage() { console.log("function canvastoimage()");
@@ -115,8 +115,8 @@
         }
         async function CompressImage(data) { console.log("function CompressImage()");
             let buffer = new ArrayBuffer(data.length);
-            let bout = []; console.log(bout);
-            let header = new Uint8Array(); console.log(header);
+            let bout = new Uint8Array();
+            let header = new Uint8Array();
             let index = 0;
             let limit = 0;
             let end = 0;
