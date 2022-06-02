@@ -90,8 +90,7 @@
             //decode = window.atob(encode); //console.log(decode);
         }
         async function canvastoimage() { console.log("function canvastoimage()");
-            let command1 = new Uint8Array([0x1B, 0x58, 0x34, 24, 120]);
-            await printCharacteristic.writeValue(command1);
+            
             console.log(bufferView); console.log(bufferView.length);
             printcanvas(bufferView);
             let command2 = new Uint8Array([0x0A]);
@@ -167,6 +166,9 @@
             return bout;
         }
         async function printcanvas(data) { console.log("function printcanvas()");
+            let command1 = new Uint8Array([0x1B, 0x58, 0x34, 24, 120]);
+            await printCharacteristic.writeValue(command1);
+                        
             let index=0; console.log(data);
             // 한번에 보낼수있는 max length = 20
             while (index + 20 < data.length) {
@@ -194,7 +196,7 @@
                         console.log(error);
                         debug.innerText = error;
                     });
-            } //await printCharacteristic.writeValue(LF);
+            } await printCharacteristic.writeValue(LF);
         }
         /* ~2022.05.19 Test (Android WSWebPrint CompressImage 데이터 변환 테스트) */
             
@@ -300,7 +302,8 @@
         });
         printimage.addEventListener('click', function() {
             //PrintImage();
-            canvastoimage();
+            //canvastoimage();
+            printcanvas(binary);
         });
                                
         async function sendTextData2() { // Print text "This is test."
