@@ -86,13 +86,14 @@
                 binary+=String.fromCharCode(bufferView[i]);
             }
             console.log(binary); console.log(binary.length);
-            encode = window.btoa(binary); console.log(encode); console.log(encode.length);
-            decode = window.atob(encode); //console.log(decode);
+            //encode = window.btoa(binary); console.log(encode); console.log(encode.length);
+            //decode = window.atob(encode); //console.log(decode);
         }
         async function canvastoimage() { console.log("function canvastoimage()");
             let command1 = new Uint8Array([0x1B, 0x58, 0x34, 24, 120]);
             await printCharacteristic.writeValue(command1);
-            printcanvas(binary);
+            console.log(binary); console.log(binary.length);
+            //printcanvas(binary);
             let command2 = new Uint8Array([0x0A]);
             await printCharacteristic.writeValue(command2);
             
