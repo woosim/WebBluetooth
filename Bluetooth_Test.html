@@ -93,7 +93,7 @@
             let command1 = new Uint8Array([0x1B, 0x58, 0x34, 24, 120]);
             await printCharacteristic.writeValue(command1);
             console.log(bufferView); console.log(bufferView.length);
-            //printcanvas(bufferView);
+            printcanvas(bufferView);
             let command2 = new Uint8Array([0x0A]);
             await printCharacteristic.writeValue(command2);
             
