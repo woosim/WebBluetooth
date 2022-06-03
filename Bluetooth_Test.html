@@ -68,10 +68,8 @@
         // 2022.06.03 Test // WSEncoder.js canvas to gray Test // Android WSWebPrint CompressImage Test ㅡㅡㅡㅡㅡㅡㅡㄱ
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
-        let width = logo.clientWidth; 
-        let height = logo.clientHeight;
-        canvas.width = width;
-        canvas.height = height;
+        let width = logo.clientWidth; canvas.width = width;
+        let height = logo.clientHeight; canvas.height = height;
         let bytePerRow = parseInt(width/8)+((width%8==0)?0:1);
         let arrayCount = bytePerRow*height;
         let buffer = new ArrayBuffer(arrayCount);
