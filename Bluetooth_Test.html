@@ -64,8 +64,8 @@
         /* 2022.05.19 ~ Test ~ (WSEncoder.js, Android WSWebPrint CompressImage 데이터 변환 테스트) ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>*/
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
-        let width = logo.width; console.log(width);
-        let height = logo.height; console.log(height);
+        let width = logo.clientWidth; console.log(width);
+        let height = logo.clientHeight; console.log(height);
         let bytePerRow = parseInt(logo.width/8)+((logo.width%8==0)?0:1);
         let arrayCount = bytePerRow*logo.height;
         let buffer = new ArrayBuffer(arrayCount);
