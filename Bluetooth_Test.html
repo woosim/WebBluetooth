@@ -216,7 +216,7 @@
         let width2 = logo2.clientWidth; console.log(width2);
         let height2 = logo2.clientHeight; console.log(height2);
         canvas2.width = width2;
-        cnavas2.height = height2;
+        canvas2.height = height2;
         let bytePerRow2 = parseInt(logo2.width/8)+((logo2.width%8==0)?0:1);
         let arrayCount2 = bytePerRow2*logo2.height;
         let buffer2 = new ArrayBuffer(arrayCount2);
