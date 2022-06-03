@@ -25,7 +25,7 @@
         <p align="center"><img  id="logo" src="./img/woosim.bmp"></p>
         <p align="center"><img  id="logo2" src="./img/woosim.png"></p>
         <br/><br/><p align="center" id="debug">Debug Text</p>
-        <canvas align="center" id="canvas" dir="rtl" width="" height=""></canvas>
+        <canvas align="center" id="canvas" dir="rtl" width="logo.clientWidth" height="logo.clientHeight"></canvas>
         <canvas align="center" id="canvas2" dir="rtl" width="" height=""></canvas>
         
         <script type="text/javascript" charset="utf-8">
@@ -209,6 +209,8 @@
         }*/
         let canvas2 = document.getElementById('canvas2');
         let context2 = canvas2.getContext('2d');
+        let width2 = logo2.clientWidth; console.log(width2);
+        let height2 = logo2.clientHeight; console.log(height2);
         let bytePerRow2 = parseInt(logo2.width/8)+((logo2.width%8==0)?0:1);
         let arrayCount2 = bytePerRow2*logo2.height;
         let buffer2 = new ArrayBuffer(arrayCount2);
