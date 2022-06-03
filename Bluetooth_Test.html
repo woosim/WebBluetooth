@@ -66,6 +66,8 @@
         let context = canvas.getContext('2d');
         let width = logo.clientWidth; console.log(width);
         let height = logo.clientHeight; console.log(height);
+        let canvas.widthe = width;
+        let canvas.height = height;
         let bytePerRow = parseInt(logo.width/8)+((logo.width%8==0)?0:1);
         let arrayCount = bytePerRow*logo.height;
         let buffer = new ArrayBuffer(arrayCount);
