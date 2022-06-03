@@ -215,7 +215,7 @@
         logo2.onload = function() { console.log(logo2);
             context2.drawImage(logo2, 0, 0, logo2.width, logo2.height); console.log(context2);
             let d2 = context2.getImageData(0, 0, logo2.width, logo2.height); console.log(d2);
-            let data2 = d2.data2; console.log(data2);
+            let data2 = d2.data; console.log(data2);
             for(let e=0; e<logo2.height; e++) {
                 for(let f=0; f<logo2.width; f++) {
                     let byteCount2 = parseInt(f/8);
