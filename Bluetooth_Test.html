@@ -8,8 +8,8 @@
         font:20px "Roboto", sans-serif;
         -webkit-font-smoothing:antialiased;
     }
-    /*#logo { display:none; }
-    #loge2 { display:none; }*/
+    #canvas { display:none; }
+    #canvas2 { display:none; }
 </style>
 
 <html>
@@ -30,8 +30,8 @@
         <canvas align="center" id="canvas" dir="rtl" width="" height=""></canvas>
         <canvas align="center" id="canvas2" dir="rtl" width="" height=""></canvas>
         
-        <script type="text/javascript" charset="utf-8">
         
+        <script type="text/javascript" charset="utf-8">
         let connect = document.querySelector('#scan');
         let printtext = document.querySelector('#printtext');
         let printimage = document.querySelector('#printimage');
@@ -45,7 +45,8 @@
         //let image = null;
         
         
-        // 한번에 보낼수있는 max length = 45 // windows web에선 45, android web에선 20 // Command Test ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>
+        // Command Test start ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㄱ
+        // 한번에 보낼수있는 max length = 45 // windows web에선 45, android web에선 20 
         let AtoZ = new Uint8Array([0x41,0x42,0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4A,0x4B,0x4C,0x4D,
                                    0x4E,0x4F,0x50,0x51,0x52,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5A]);
         let GAtoHA = new Uint8Array([0xB0,0xA1,0xB3,0xAA,0xB4,0xD9,0xB6,0xF3,0xB8,0xB6,0xB9,0xD9,0xBB,0xE7,
@@ -55,32 +56,29 @@
         let test = new Uint8Array([0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x74, 0x65, 0x73, 0x74, 0x2E]); // text "This is test."
         
         let LF = new Uint8Array([0x0A]); // Print and Line feed
+        let LF3 = new Uint8Array([0x0A, 0x0A, 0x0A]); // Print and Line feed x3
         let initialize = new Uint8Array([0x1B, 0x40]); // Initialize printer. ESC @
         let pagemode = new Uint8Array([0x1B, 0x4C]); // Select page mode. ESC L
         let FF = new Uint8Array([0x0C]); // Print and return to standard mode in page mode. FF
         let area = new Uint8Array([0x1B, 0x57, 0x00, 0x00, 0x00, 0x00, 0x80, 0x01, 0x80, 0x01]); // Set printing area in page mode.
         let bitcommand1 = new Uint8Array([0x1B, 0x58, 0x34, 0x02, 0x14]); // ESC X 4 x y d1 ~ dk // Define user-defined bit-image.
-        // Command Test ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>
+        // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ Command Test end //
         
         
-        /* 2022.05.19 ~ Test ~ (WSEncoder.js, Android WSWebPrint CompressImage 데이터 변환 테스트) ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>*/
+        // 2022.06.03 Test // WSEncoder.js canvas to gray Test // Android WSWebPrint CompressImage Test ㅡㅡㅡㅡㅡㅡㅡㄱ
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
-        let width = logo.clientWidth; console.log(width);
-        let height = logo.clientHeight; console.log(height);
-        canvas.width = width;
-        canvas.height = height;
-        let bytePerRow = parseInt(logo.width/8)+((logo.width%8==0)?0:1);
-        let arrayCount = bytePerRow*logo.height;
+        let width = logo.clientWidth; canvas.width = width;
+        let height = logo.clientHeight; canvas.height = height;
+        let bytePerRow = parseInt(width/8)+((width%8==0)?0:1);
+        let arrayCount = bytePerRow*height;
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
-        //let compressedData = new Uint8Array();
-        //let binary=""; //let encode=""; //let decode="";
         
         logo.onload = function() { console.log(logo);
-            context.drawImage(logo, 0, 0, width, height); console.log(context);
-            let d = context.getImageData(0, 0, width, height); console.log(d);
-            let data = d.data; console.log(data);
+            context.drawImage(logo, 0, 0, width, height);
+            let d = context.getImageData(0, 0, width, height);
+            let data = d.data; console.log(d); console.log(data);
             for(let e=0; e<height; e++) {
                 for(let f=0; f<width; f++) {
                     let byteCount = parseInt(f/8);
@@ -93,19 +91,11 @@
                     }
                 }
             } console.log(bufferView);
-            //let len = buffer.byteLength;
-            //for(let i=0; i<len; i++) {
-            //    binary+=String.fromCharCode(bufferView[i]);
-            //}
-            //console.log(binary); console.log(binary.length);
-            //encode = window.btoa(binary); console.log(encode); console.log(encode.length);
-            //decode = window.atob(encode); //console.log(decode); console.log(decode.length);
         }
         
         async function printcanvas(data) { console.log("function printcanvas()");
-            let command1 = new Uint8Array([0x1B, 0x58, 0x34, logo.width/8, logo.height]);
+            let command1 = new Uint8Array([0x1B, 0x58, 0x34, width/8, height]);
             await printCharacteristic.writeValue(command1);
-            
             let index=0; console.log(data);
             // 한번에 보낼수있는 max length = 20
             while (index + 20 < data.length) {
@@ -113,34 +103,97 @@
                 await printCharacteristic.writeValue(temp)
                     .then(() => {
                         this.delayPromise(100);
-                        //console.log(temp);
                         index += 20;
                     })
                     .catch(error => { 
                         console.log(error);
                         debug.innerText = error;
                     });
-            } //console.log(index);
-            
+            }
             if (index < data.length) {
                 let temp = data.slice(index, data.length);
                 await printCharacteristic.writeValue(temp)
                     .then(() => {
                         this.delayPromise(100);
-                        //console.log(temp);
                     })
                     .catch(error => { 
                         console.log(error);
                         debug.innerText = error;
                     });
-            } await printCharacteristic.writeValue(LF);
+            } await printCharacteristic.writeValue(LF3);
         }
+        
+        let canvas2 = document.getElementById('canvas2');
+        let context2 = canvas2.getContext('2d');
+        let width2 = logo2.clientWidth; canvas2.width = width2;
+        let height2 = logo2.clientHeight; canvas2.height = height2;
+        let bytePerRow2 = parseInt(width2/8)+((width2%8==0)?0:1);
+        let arrayCount2 = bytePerRow2*height2;
+        let buffer2 = new ArrayBuffer(arrayCount2);
+        let bufferView2 = new Uint8Array(buffer2);
+                
+        logo2.onload = function() { console.log(logo2);
+            context2.drawImage(logo2, 0, 0, width2, height2);
+            let d2 = context2.getImageData(0, 0, width2, height2); 
+            let data2 = d2.data; console.log(d2); console.log(data2);
+            for(let e=0; e<height2; e++) {
+                for(let f=0; f<width2; f++) {
+                    let byteCount2 = parseInt(f/8);
+                    let bitCount2 = parseInt(f%8);
+                    let byteIndex2 = (e*bytePerRow2)+byteCount2;
+                    let dataIndex2 = (e*width2*4)+(f*4);
+                    let gray2 = parseInt(data2[dataIndex2]*0.21+data2[dataIndex2+1]*0.51+data2[dataIndex2+2]*0.07,10);
+                    if( (gray2<=128) && (data2[dataIndex2+3]!=0) ) {
+                        bufferView2[byteIndex2]|=0x01<<(7-bitCount2);
+                    }
+                }
+            } console.log(bufferView2);
+        }
+        
+        async function printcanvas2(data) { console.log("function printcanvas2()");
+            let command2 = new Uint8Array([0x1B, 0x58, 0x34, width2/8, height2]);
+            await printCharacteristic.writeValue(command2);
+            let index=0; console.log(data);
+            while (index + 20 < data.length) {
+                let temp = data.slice(index, index + 20);
+                await printCharacteristic.writeValue(temp)
+                    .then(() => {
+                        this.delayPromise(100);
+                        index += 20;
+                    })
+                    .catch(error => { 
+                        console.log(error);
+                        debug.innerText = error;
+                    });
+            }
+            if (index < data.length) {
+                let temp = data.slice(index, data.length);
+                await printCharacteristic.writeValue(temp)
+                    .then(() => {
+                        this.delayPromise(100);
+                    })
+                    .catch(error => { 
+                        console.log(error);
+                        debug.innerText = error;
+                    });
+            } await printCharacteristic.writeValue(LF3);
+        }
+        // ㅡㅡㅡㅡㅡㅡㅡ 2022.06.03 Test // WSEncoder.js canvas to gray Test // Android WSWebPrint CompressImage Test //
+        
+        
+        // 2022.06.03 Test start ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㄱ
         /*async function canvastoimage() { console.log("function canvastoimage()");
             
-            console.log(bufferView); console.log(bufferView.length);
-            printcanvas(bufferView);
-            let command2 = new Uint8Array([0x0A]);
-            await printCharacteristic.writeValue(command2);
+            //let compressedData = new Uint8Array();
+            //let binary=""; //let encode=""; //let decode="";
+            
+            //let len = buffer.byteLength;
+            //for(let i=0; i<len; i++) {
+            //    binary+=String.fromCharCode(bufferView[i]);
+            //}
+            //console.log(binary); console.log(binary.length);
+            //encode = window.btoa(binary); console.log(encode); console.log(encode.length);
+            //decode = window.atob(encode); //console.log(decode); console.log(decode.length);
             
             let imgRowBytes = (192 / 8) + ((192 % 8 == 0) ? 0 : 1);
             let page = 0;
@@ -211,64 +264,7 @@
             //let buffer = new ArrayBuffer(bout);
             return bout;
         }*/
-        let canvas2 = document.getElementById('canvas2');
-        let context2 = canvas2.getContext('2d');
-        let width2 = logo2.clientWidth; console.log(width2);
-        let height2 = logo2.clientHeight; console.log(height2);
-        canvas2.width = width2;
-        canvas2.height = height2;
-        let bytePerRow2 = parseInt(logo2.width/8)+((logo2.width%8==0)?0:1);
-        let arrayCount2 = bytePerRow2*logo2.height;
-        let buffer2 = new ArrayBuffer(arrayCount2);
-        let bufferView2 = new Uint8Array(buffer2);
-                
-        logo2.onload = function() { console.log(logo2);
-            context2.drawImage(logo2, 0, 0, width2, height2); console.log(context2);
-            let d2 = context2.getImageData(0, 0, width2, height2); console.log(d2);
-            let data2 = d2.data; console.log(data2);
-            for(let e=0; e<height2; e++) {
-                for(let f=0; f<width2; f++) {
-                    let byteCount2 = parseInt(f/8);
-                    let bitCount2 = parseInt(f%8);
-                    let byteIndex2 = (e*bytePerRow2)+byteCount2;
-                    let dataIndex2 = (e*logo2.width*4)+(f*4);
-                    let gray2 = parseInt(data2[dataIndex2]*0.21+data2[dataIndex2+1]*0.51+data2[dataIndex2+2]*0.07,10);
-                    if( (gray2<=128) && (data2[dataIndex2+3]!=0) ) {
-                        bufferView2[byteIndex2]|=0x01<<(7-bitCount2);
-                    }
-                }
-            } console.log(bufferView2);
-        }
-        
-        async function printcanvas2(data) { console.log("function printcanvas2()");
-            let command2 = new Uint8Array([0x1B, 0x58, 0x34, logo2.width/8, logo2.height]);
-            await printCharacteristic.writeValue(command2);
-            let index=0; console.log(data);
-            while (index + 20 < data.length) {
-                let temp = data.slice(index, index + 20);
-                await printCharacteristic.writeValue(temp)
-                    .then(() => {
-                        this.delayPromise(100);
-                        index += 20;
-                    })
-                    .catch(error => { 
-                        console.log(error);
-                        debug.innerText = error;
-                    });
-            }
-            if (index < data.length) {
-                let temp = data.slice(index, data.length);
-                await printCharacteristic.writeValue(temp)
-                    .then(() => {
-                        this.delayPromise(100);
-                    })
-                    .catch(error => { 
-                        console.log(error);
-                        debug.innerText = error;
-                    });
-            } await printCharacteristic.writeValue(LF);
-        }
-        /* 2022.05.19 Test (WSEncoder.js, Android WSWebPrint CompressImage 데이터 변환 테스트) ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>*/
+        // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 2022.06.03 Test end //
         
         
         /* 2022.04.11 불러오기를 통해 불러온 file을 array buffer형식으로 읽어오는 test코드 */
@@ -286,8 +282,7 @@
                 console.log(image);
                 console.log(image.length);
             }
-        });*/
-        
+        });
         async function PrintImage() {
             let index=0;
             await printCharacteristic.writeValue(initialize);
@@ -318,34 +313,30 @@
                         debug.innerText = error;
                     });
             } await printCharacteristic.writeValue(LF);
-        }
+        }*/
         /* 2022.04.11 불러오기를 통해 불러온 file을 array buffer형식으로 읽어오는 test코드 */
+                
         
-        
-        
-        
+        // function test example start ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㄱ
+        printtext.addEventListener('click', function() {
+            sendTextData2();
+        });
+        printimage.addEventListener('click', function() {
+            printcanvas(bufferView);
+        });
+        printimage2.addEventListener('click', function() {
+            printcanvas2(bufferView2);
+        });
         
         async function sendTextData1() { // Print text "Woosim System"
           await printCharacteristic.writeValue(woosim);
-          await printCharacteristic.writeValue(LF)
+          await printCharacteristic.writeValue(LF3)
             .then(() => this.delayPromise(100))
             .catch(error => { 
                 console.log(error);
                 debug.innerText = error;
             });
         }
-            
-        printtext.addEventListener('click', function() {
-            sendTextData2();
-        });
-        printimage.addEventListener('click', function() {
-            //PrintImage();
-            //canvastoimage();
-            printcanvas(bufferView);
-        });
-        printimage2.addEventListener('click', function() {
-            printcanvas2(bufferView2);
-        });
         
         async function sendTextData2() { // Print text "This is test."
           await printCharacteristic.writeValue(test).then(() => this.delayPromise(100));
@@ -355,25 +346,26 @@
           await printCharacteristic.writeValue(AtoZ).then(() => this.delayPromise(100));
           await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
           await printCharacteristic.writeValue(ONEtoZERO).then(() => this.delayPromise(100));
-          await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
-          await printCharacteristic.writeValue(LF).then(() => this.delayPromise(100));
-          await printCharacteristic.writeValue(LF)
+          await printCharacteristic.writeValue(LF3)
             .then(() => this.delayPromise(100))
             .catch(error => { 
                 console.log(error);
                 debug.innerText = error;
             });
         }
+        // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ function test example end //
         
         
+        // Delay start ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㄱ
         function delayPromise(delay) {
             return new Promise(resolve => {
                 setTimeout(resolve, delay);
             });
         }
+        // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ Delay end //
         
         
-        // Connect ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>
+        // Connect start ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㄱ
         connect.addEventListener('click', function() { // Scan Button Click
             debug.innerText = 'Scanning the device...';
             console.log('Scanning the device...');
@@ -403,17 +395,17 @@
             .then(characteristic => {
                 console.log('characteristic and send text data');
                 printCharacteristic = characteristic;
-                // sendTextData1(); // 연결되면 text "Woosim System" 출력
+                // sendTextData1(); // 연결되면 text "Woosim System" 출력 Test용
             })
             .catch(error => {
                 console.log(error);
                 debug.innerText = error;
             });
         });
-        // Connect ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>
+        // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ Connect end //
         
         
-        // DisConnect ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>
+        // DisConnect start ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㄱ
         disconnect.addEventListener('click', function() { // Disconnect Button Click
             console.log(BluetoothDevice);
             if(!BluetoothDevice) {
@@ -430,7 +422,7 @@
                 console.log('Bluetooth Device is already disconnected');
             }
         });
-        // DisConnect ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ>
+        // ㄴㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ DisConnect end //
         
         </script>
     </body>
