@@ -24,9 +24,9 @@
         <p align="center"><button id="printimage" class="buttons">Print Logo 1</button></p>
         <p align="center"><button id="printimage2" class="buttons">Print Logo 2</button></p>
         <p align="center"><button id="disconnect" class="buttons">Disconnect Device</button></p>
+        <br/><br/><p align="center" id="debug">Debug Text</p>
         <p align="center"><img  id="logo" src="./img/woosim.bmp"></p>
         <p align="center"><img  id="logo2" src="./img/woosim.png"></p>
-        <br/><br/><p align="center" id="debug">Debug Text</p>
         <canvas align="center" id="canvas" dir="rtl" width="" height=""></canvas>
         <canvas align="center" id="canvas2" dir="rtl" width="" height=""></canvas>
         
@@ -70,14 +70,14 @@
         let context = canvas.getContext('2d');
         let width = logo.clientWidth; canvas.width = width;
         let height = logo.clientHeight; canvas.height = height;
+        context.drawImage(logo, 0, 0, width, height);
+        let d = context.getImageData(0, 0, width, height);
+        let data = d.data; console.log(d); console.log(data);
         let bytePerRow = parseInt(width/8)+((width%8==0)?0:1);
         let arrayCount = bytePerRow*height;
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
         
-        context.drawImage(logo, 0, 0, width, height);
-        let d = context.getImageData(0, 0, width, height);
-        let data = d.data; console.log(d); console.log(data);
         for(let e=0; e<height; e++) {
             for(let f=0; f<width; f++) {
                 let byteCount = parseInt(f/8);
@@ -90,24 +90,6 @@
                 }
             }
         } console.log(bufferView);
-        
-        /*logo.onload = function() { console.log(logo);
-            context.drawImage(logo, 0, 0, width, height);
-            let d = context.getImageData(0, 0, width, height);
-            let data = d.data; console.log(d); console.log(data);
-            for(let e=0; e<height; e++) {
-                for(let f=0; f<width; f++) {
-                    let byteCount = parseInt(f/8);
-                    let bitCount = parseInt(f%8);
-                    let byteIndex = (e*bytePerRow)+byteCount;
-                    let dataIndex = (e*width*4)+(f*4);
-                    let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10);
-                    if( (gray<=128) && (data[dataIndex+3]!=0) ) {
-                        bufferView[byteIndex]|=0x01<<(7-bitCount);
-                    }
-                }
-            } console.log(bufferView);
-        }*/
         
         async function printcanvas(data) { console.log("function printcanvas()");
             let command1 = new Uint8Array([0x1B, 0x58, 0x34, width/8, height]);
@@ -143,29 +125,27 @@
         let context2 = canvas2.getContext('2d');
         let width2 = logo2.clientWidth; canvas2.width = width2;
         let height2 = logo2.clientHeight; canvas2.height = height2;
+        context2.drawImage(logo2, 0, 0, width2, height2);
+        let d2 = context2.getImageData(0, 0, width2, height2); 
+        let data2 = d2.data; console.log(d2); console.log(data2);
         let bytePerRow2 = parseInt(width2/8)+((width2%8==0)?0:1);
         let arrayCount2 = bytePerRow2*height2;
         let buffer2 = new ArrayBuffer(arrayCount2);
         let bufferView2 = new Uint8Array(buffer2);
                 
-        logo2.onload = function() { console.log(logo2);
-            context2.drawImage(logo2, 0, 0, width2, height2);
-            let d2 = context2.getImageData(0, 0, width2, height2); 
-            let data2 = d2.data; console.log(d2); console.log(data2);
-            for(let e=0; e<height2; e++) {
-                for(let f=0; f<width2; f++) {
-                    let byteCount2 = parseInt(f/8);
-                    let bitCount2 = parseInt(f%8);
-                    let byteIndex2 = (e*bytePerRow2)+byteCount2;
-                    let dataIndex2 = (e*width2*4)+(f*4);
-                    let gray2 = parseInt(data2[dataIndex2]*0.21+data2[dataIndex2+1]*0.51+data2[dataIndex2+2]*0.07,10);
-                    if( (gray2<=128) && (data2[dataIndex2+3]!=0) ) {
-                        bufferView2[byteIndex2]|=0x01<<(7-bitCount2);
-                    }
+        for(let e=0; e<height2; e++) {
+            for(let f=0; f<width2; f++) {
+                let byteCount2 = parseInt(f/8);
+                let bitCount2 = parseInt(f%8);
+                let byteIndex2 = (e*bytePerRow2)+byteCount2;
+                let dataIndex2 = (e*width2*4)+(f*4);
+                let gray2 = parseInt(data2[dataIndex2]*0.21+data2[dataIndex2+1]*0.51+data2[dataIndex2+2]*0.07,10);
+                if( (gray2<=128) && (data2[dataIndex2+3]!=0) ) {
+                    bufferView2[byteIndex2]|=0x01<<(7-bitCount2);
                 }
-            } console.log(bufferView2);
-        }
-        
+            }
+        } console.log(bufferView2);
+                
         async function printcanvas2(data) { console.log("function printcanvas2()");
             let command2 = new Uint8Array([0x1B, 0x58, 0x34, width2/8, height2]);
             await printCharacteristic.writeValue(command2);
