@@ -18,21 +18,26 @@
     <body>
         <p align="center"><button id="scan" class="buttons">Scan Device</button></p>
         <p align="center"><button id="printtext" class="buttons">Print Text</button></p>
-        <p align="center"><input id="file" type="file"></p> <!--onchange="onImageChange(event)-->
-        <p align="center"><button id="printimage" class="buttons">Print File</button></p>
+        <!--<p align="center"><input id="file" type="file"></p>--> <!--onchange="onImageChange(event)-->
+        <p align="center"><button id="printimage" class="buttons">Print Logo 1</button></p>
+        <p align="center"><button id="printimage2" class="buttons">Print Logo 2</button></p>
         <p align="center"><button id="disconnect" class="buttons">Disconnect Device</button></p>
         <p align="center"><img  id="logo" src="./img/woosim.bmp"></p>
+        <p align="center"><img  id="logo2" src="./img/woosim.png"></p>
         <br/><br/><br/><br/><p align="center" id="debug">Debug Text</p>
-        <canvas align="center" id="canvas" dir="rtl" width="" height=""></canvas> <!--2022.05.19 Test-->
+        <canvas align="center" id="canvas" dir="rtl" width="" height=""></canvas>
+        <canvas align="center" id="canvas2" dir="rtl" width="" height=""></canvas>
         
         <script type="text/javascript" charset="utf-8">
         
         let connect = document.querySelector('#scan');
         let printtext = document.querySelector('#printtext');
         let printimage = document.querySelector('#printimage');
+        let printimage2 = document.querySelector('#printimage2');
         let disconnect = document.querySelector('#disconnect');
         let debug = document.querySelector('#debug');
         let logo = document.querySelector('#logo');
+        let logo2 = document.querySelector('#logo2');
         let printCharacteristic = null;
         let BluetoothDevice = null;
         let image = null;
@@ -56,8 +61,8 @@
         /* 2022.05.19 Test~ (Android WSWebPrint CompressImage 데이터 변환 테스트) */
         let canvas = document.getElementById('canvas');
         let context = canvas.getContext('2d');
-        let bytePerRow = parseInt(192/8)+((192%8==0)?0:1);
-        let arrayCount = bytePerRow*120;
+        let bytePerRow = parseInt(logo.width/8)+((logo.width%8==0)?0:1);
+        let arrayCount = bytePerRow*logo.height;
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
         let compressedData = new Uint8Array();
@@ -66,37 +71,37 @@
         let decode="";
         
         logo.onload = function() { console.log(logo);
-            context.drawImage(logo, 0, 0, 192, 120); console.log(context);
-            let d = context.getImageData(0, 0, 192, 120); console.log(d);
+            context.drawImage(logo, 0, 0, logo.width, logo.height); console.log(context);
+            let d = context.getImageData(0, 0, logo.width, logo.height); console.log(d);
             let data = d.data; console.log(data);
-            for(let e=0; e<120; e++) {
-                for(let f=0; f<192; f++) {
+            for(let e=0; e<logo.height; e++) {
+                for(let f=0; f<logo.width; f++) {
                     let byteCount = parseInt(f/8);
                     let bitCount = parseInt(f%8);
                     let byteIndex = (e*bytePerRow)+byteCount;
-                    let dataIndex = (e*192*4)+(f*4);
+                    let dataIndex = (e*logo.width*4)+(f*4);
                     let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10);
                     if( (gray<=128) && (data[dataIndex+3]!=0) ) {
                         bufferView[byteIndex]|=0x01<<(7-bitCount);
                     }
                 }
             } console.log(bufferView);
-            let len = buffer.byteLength;
-            for(let i=0; i<len; i++) {
-                binary+=String.fromCharCode(bufferView[i]);
-            }
-            console.log(binary); console.log(binary.length);
+            //let len = buffer.byteLength;
+            //for(let i=0; i<len; i++) {
+            //    binary+=String.fromCharCode(bufferView[i]);
+            //}
+            //console.log(binary); console.log(binary.length);
             //encode = window.btoa(binary); console.log(encode); console.log(encode.length);
-            //decode = window.atob(encode); //console.log(decode);
+            //decode = window.atob(encode); //console.log(decode); console.log(decode.length);
         }
-        async function canvastoimage() { console.log("function canvastoimage()");
+        /*async function canvastoimage() { console.log("function canvastoimage()");
             
             console.log(bufferView); console.log(bufferView.length);
             printcanvas(bufferView);
             let command2 = new Uint8Array([0x0A]);
             await printCharacteristic.writeValue(command2);
             
-            /*let imgRowBytes = (192 / 8) + ((192 % 8 == 0) ? 0 : 1);
+            let imgRowBytes = (192 / 8) + ((192 % 8 == 0) ? 0 : 1);
             let page = 0;
             for(; page < 120/255; page++) {
                 let from = page * imgRowBytes * 255; console.log(from);
@@ -117,9 +122,9 @@
                 printcanvas(compressedData);
                 let command4 = new Uint8Array([0x1B, 0x58, 0x32, (120%255)]);
                 await printCharacteristic.writeValue(command4);
-            }*/
-        }
-        async function CompressImage(data) { console.log("function CompressImage()");
+            }
+        }*/
+        /*async function CompressImage(data) { console.log("function CompressImage()");
             let bout = new ArrayBuffer();
             let header = new ArrayBuffer();
             let index = 0;
@@ -164,7 +169,7 @@
             } console.log(bout); console.log(bout.length);
             //let buffer = new ArrayBuffer(bout);
             return bout;
-        }
+        }*/
         async function printcanvas(data) { console.log("function printcanvas()");
             let command1 = new Uint8Array([0x1B, 0x58, 0x34, 24, 120]);
             await printCharacteristic.writeValue(command1);
