@@ -75,7 +75,23 @@
         let buffer = new ArrayBuffer(arrayCount);
         let bufferView = new Uint8Array(buffer);
         
-        logo.onload = function() { console.log(logo);
+        context.drawImage(logo, 0, 0, width, height);
+        let d = context.getImageData(0, 0, width, height);
+        let data = d.data; console.log(d); console.log(data);
+        for(let e=0; e<height; e++) {
+            for(let f=0; f<width; f++) {
+                let byteCount = parseInt(f/8);
+                let bitCount = parseInt(f%8);
+                let byteIndex = (e*bytePerRow)+byteCount;
+                let dataIndex = (e*width*4)+(f*4);
+                let gray = parseInt(data[dataIndex]*0.21+data[dataIndex+1]*0.51+data[dataIndex+2]*0.07,10);
+                if( (gray<=128) && (data[dataIndex+3]!=0) ) {
+                    bufferView[byteIndex]|=0x01<<(7-bitCount);
+                }
+            }
+        } console.log(bufferView);
+        
+        /*logo.onload = function() { console.log(logo);
             context.drawImage(logo, 0, 0, width, height);
             let d = context.getImageData(0, 0, width, height);
             let data = d.data; console.log(d); console.log(data);
@@ -91,7 +107,7 @@
                     }
                 }
             } console.log(bufferView);
-        }
+        }*/
         
         async function printcanvas(data) { console.log("function printcanvas()");
             let command1 = new Uint8Array([0x1B, 0x58, 0x34, width/8, height]);
